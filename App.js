@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, ActivityIndicator, Text, Platform, StatusBar, Button} from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Image, Text, Platform, StatusBar, Button} from 'react-native';
 
 //navigation
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,67 +12,68 @@ import {AppStackScreen} from './navigation/AppNavigation';
 
 //
 import {AuthContext} from './context';
+import * as firebase from "firebase";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB5rh-a82gm5HtCjJK3uXZ8YqWSBsRnfaE",
+  authDomain: "myhack-cc52b.firebaseapp.com",
+  databaseURL: "https://myhack-cc52b.firebaseio.com",
+  projectId: "myhack-cc52b",
+  storageBucket: "myhack-cc52b.appspot.com",
+  messagingSenderId: "642183315013",
+  appId: "1:642183315013:web:40160351295154637b6d2c"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
 const RootStack = createStackNavigator();
-const RootStackScreen = ({userToken}) => {
-	return(
-		<RootStack.Navigator headerMode="none">
-			{userToken ? (
-				<RootStack.Screen name="App" component={AppStackScreen} options={{animationEnabled: false}} />	
-			) : (
-				//<RootStack.Screen name="App" component={DrawerNavigatorScreen}/>
-				<RootStack.Screen name="App" component={AppStackScreen} options={{animationEnabled: false}} />
-				//<RootStack.Screen name="Auth" component={AuthStackScreen} options={{animationEnabled: false}} />
-			)}
-		</RootStack.Navigator>
-	);
-}
-
+//const RootStackScreen = ({userToken}) => {
+	
 export default () => {
 
-	const [isLoading, setIsLoading] = React.useState(true);
-	const [userToken, setUserToken] = React.useState(null);
+	const [initializing, setInitializing] = React.useState(true)
+  	const [user, setUser] = React.useState(null)
 
-	const authContext = React.useMemo(() => {
-		return {
-			signIn: () => {
-				setIsLoading(false);
-				setUserToken("boom");	
-			},
-			signUp: () => {
-				setIsLoading(false);
-				setUserToken("boom");	
-			},
-			signOut: () => {
-				setIsLoading(false);
-				setUserToken(null);	
-			},
-			passwordReset: (email) => {
-  				return firebase.auth().sendPasswordResetEmail(email)
-			},
-		};
-	}, []);
+	// Handle user state changes
+  	function onAuthStateChanged(result) {
+    	setUser(result)
+    		if (initializing){
+    			setInitializing(false)
+    		}
+  		}
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			setIsLoading(false);
-		}, 1000);
+		const authSubscriber = firebase.auth().onAuthStateChanged(onAuthStateChanged)
+		// unsubscribe on unmount
+    	return authSubscriber
+		/*setTimeout(() => {
+			setInitializing(false);
+		}, 2000);*/
 	}, []);
 
-	if(isLoading){
+	if(initializing){
 		return(
-			<View style={{flex: 1, justifyContent: 'center', backgroundColor: '#000000', alignItems: 'center',}}>
+			<View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 20, backgroundColor: '#000000', alignItems: 'center',}}>
+				<View style={{height: 140, width: 140, borderRadius: 70, overflow: 'hidden', marginVertical: 10, }}>
+					<Image style={{height:'100%', width:'100%'}} source={require('./assets/images/mercedes-benz.png')} />
+				</View>
+				<Text style={{color: '#fff', fontSize: 14, textAlign: 'center', paddingVertical: 20, }}>Welcome to Spear Motors for your Mercedes Benz Care</Text>
 				<ActivityIndicator size="large" color="#fff" />
 			</View>
 		);
 	}
 
 	return(
-		<AuthContext.Provider value={authContext}>
-			<NavigationContainer>
-				<RootStackScreen userToken={userToken} />
-			</NavigationContainer>
-		</AuthContext.Provider>
+		<NavigationContainer>
+			<RootStack.Navigator headerMode="none">
+				{user ? (
+					<RootStack.Screen name="App" component={AppStackScreen} options={{animationEnabled: false}} />
+						
+				) : (
+					<RootStack.Screen name="Auth" component={AuthStackScreen} options={{animationEnabled: false}} />
+				)}
+			</RootStack.Navigator>
+		</NavigationContainer>
 	);
 }
 

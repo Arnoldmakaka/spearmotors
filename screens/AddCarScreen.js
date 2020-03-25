@@ -25,6 +25,7 @@ export const AddCarScreen = ({navigation}) => {
       return;
     }
     setFrontImage({ localUri: pickerResult.uri });
+    console.log(pickerResult)
   };
 
   const openRearImagePickerAsync = async () => {

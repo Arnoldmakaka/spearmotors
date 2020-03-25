@@ -1,105 +1,103 @@
-import React, { Component, Fragment } from 'react';
-import { Text, SafeAreaView, View, Button, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {Platform, ActivityIndicator, AsyncStorage, YellowBox, ImageBackground, Button, Alert, ScrollView, StyleSheet, Share, Text, Modal, View, StatusBar, Picker, TextInput, KeyboardAvoidingView, Image, TouchableHighlight, TouchableOpacity, Linking} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as firebase from "firebase";
 
-export const ForgotPassword = () => {
-  return(
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center',}}>
-      <Text style={{fontSize: 24, textAlign: 'center', marginVertical: 10}}>ForgotPassword</Text>
-    </View>
-  );
+YellowBox.ignoreWarnings(['Warning: componentWill'])
+console.disableYellowBox = true;
+
+export default class ForgotPassword extends Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      loading: false,
+      message: ''
+    }
+  }
+
+  send = () => {
+    let {email} = this.state
+    if (this.state.email != ''){
+      this.setState({
+        loading:true,
+        message: ''
+      })
+      firebase.auth().sendPasswordResetEmail(email)
+      .then((user) => {
+        this.props.navigation.navigate("Home");
+      })
+      .catch((err) => {
+        this.setState({
+          loading:false,
+          message: err.message
+        })
+      })
+    }
+    else{
+      Alert.alert("Misiing Fields", "Please fill in all required fields")
+    }
+  }
+
+  render() {
+    let{message, loading} = this.state
+    return (
+      <View style={{flex: 1, backgroundColor: '#000', paddingVertical: 30}}>
+
+        <View style={{backgroundColor: '#000'}}>
+          <View style={{height: 40,}}>
+            <View style={{alignItems: 'flex-start', justifyContent: 'center',}}>
+              <TouchableOpacity style={{marginHorizontal: 15,}} onPress={() => this.props.navigation.navigate("Login")}>
+                <Ionicons name="ios-arrow-round-back" size={40} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View style={{flex: 1, backgroundColor: '#000000'}}>
+          <ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
+            <KeyboardAvoidingView style={{flex: 1,}} behavior="padding" enabled>
+              <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 40, paddingVertical: 40, }}>
+                {loading ? <ActivityIndicator color="#fff" /> : <Text style={{color: '#fff', textAlign: 'center', paddingVertical: 15 }}>{message}</Text>}
+                <View style={{flex: 1,  justifyContent: 'center',}}>
+                  <Text style={{fontSize: 18, textAlign: 'center', fontStyle: 'normal', fontWeight: '400', color: '#fff', paddingVertical: 20,}} >Forgot Password?</Text>
+                  <TextInput keyboardType = 'email-address' onChangeText={(email)=>this.setState({email})} placeholder="Your email" style={{textAlign: 'left', height: 50, color: '#fff', borderBottomColor: '#fff', borderBottomWidth: 2, marginVertical: 10}}/>
+                </View>
+
+                <View style={{marginTop: 20, marginBottom: 10,}}>
+                  <TouchableOpacity onPress={this.send} style={{backgroundColor: '#fff', borderRadius: 4}}>
+                    <Text style={{textAlign: 'center', fontSize: 16, color: '#000', paddingVertical: 10, paddingHorizontal: 70,}}>Reset</Text>
+                  </TouchableOpacity>
+                </View>
+
+              </View> 
+
+              
+               
+            </KeyboardAvoidingView>
+            
+          </ScrollView>  
+        </View>
+
+      </View>
+    );
+  }
 }
-
-/*import { Formik } from 'formik'
-import * as Yup from 'yup'
-import FormInput from '../components/FormInput'
-import FormButton from '../components/FormButton'
-import ErrorMessage from '../components/ErrorMessage'
-import { withFirebaseHOC } from '../config/Firebase'
-
-const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .label('Email')
-    .email('Enter a valid email')
-    .required('Please enter a registered email')
-})
-
-class ForgotPassword extends Component {
-
-	handlePasswordReset = async (values, actions) => {
-  		const { email } = values
-  		try {
-    		await this.props.firebase.passwordReset(email)
-    		console.log('Password reset email sent successfully')
-    		this.props.navigation.navigate('Login')
-  		} catch (error) {
-    		actions.setFieldError('general', error.message)
-  		}
-	}
-
-	render() {
-    	return (
-      		<SafeAreaView style={styles.container}>
-        		<Text style={styles.text}>Forgot Password?</Text>
-        		<Formik
-          			initialValues={{ email: '' }}
-          			onSubmit={(values, actions) => {
-            			this.handlePasswordReset(values, actions)
-          			}}
-          			validationSchema={validationSchema}>
-          			{({
-            			handleChange,
-            			values,
-            			handleSubmit,
-            			errors,
-            			isValid,
-            			touched,
-            			handleBlur,
-            			isSubmitting
-          			}) => (
-	            		<Fragment>
-	              			<FormInput
-	                			name='email'
-	                			value={values.email}
-	                			onChangeText={handleChange('email')}
-	                			placeholder='Enter email'
-	                			autoCapitalize='none'
-	                			iconName='ios-mail'
-	                			iconColor='#2C384A'
-	                			onBlur={handleBlur('email')}
-	              			/>
-	              			<ErrorMessage errorValue={touched.email && errors.email} />
-	              			<View style={styles.buttonContainer}>
-	                			<FormButton
-	                  				buttonType='outline'
-	                  				onPress={handleSubmit}
-	                  				title='Send Email'
-	                  				buttonColor='#039BE5'
-	                  				disabled={!isValid || isSubmitting}
-	                			/>
-	              			</View>
-	              			<ErrorMessage errorValue={errors.general} />
-	            		</Fragment>
-          			)}
-        		</Formik>
-      		</SafeAreaView>
-    	)
-  	}
-}
-
-export default withFirebaseHOC(ForgotPassword);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    marginTop: 150
+    backgroundColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',  
   },
-  text: {
-    color: '#333',
-    fontSize: 24,
-    marginLeft: 25
+  thumbnail: {
+    width: 120,
+    height: 120,
+    resizeMode: "contain",
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 4,
+    marginVertical: 4,
   },
-  buttonContainer: {
-    margin: 25
-  }
-})*/
+})

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { View, Picker, StyleSheet, Text, Platform, TouchableOpacity, ScrollView, KeyboardAvoidingView, StatusBar, Button, TextInput} from 'react-native';
 
 
-export const ServiceRequestScreen = () => {
+export const ServiceRequestScreen = ({navigation}) => {
 	const [pickvalue, setpickvalue] = React.useState("");
 
 	const showpickvalue = (value) => {

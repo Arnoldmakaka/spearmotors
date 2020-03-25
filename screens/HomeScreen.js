@@ -1,10 +1,91 @@
 import React, {Component} from 'react';
-import { View, Modal, Alert, KeyboardAvoidingView, TextInput, StyleSheet, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar, Button} from 'react-native';
-import { Ionicons } from '@expo/vector-icons'
+import { View, Modal, Alert, AsyncStorage, ImageBackground, KeyboardAvoidingView, TextInput, StyleSheet, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar, Button} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import * as firebase from "firebase";
 
-export const HomeScreen = ({navigation}) => { 
-	const [modalVisible, setModalVisible] = React.useState(false);
-	return(
+
+export default class HomeScreen extends Component  { 
+
+	constructor(props){
+		super()
+		this.state={
+			modalVisible: false,
+			setModalVisible: false,
+			message: '',
+			email: '',
+			name: '',
+			pic: ''
+		}
+	}
+
+	componentDidMount() {
+		let user = firebase.auth().currentUser;
+		this.setState({
+			name: user.displayName,
+			email: user.email
+		})
+		AsyncStorage.getItem("@key_profilepic").then((r)=>{
+  			var userpic = JSON.parse(r)
+		    this.setState({pic: userpic.userdp})
+		})
+	}
+
+	mymodal = () => {
+		let {setModalVisible, modalVisible} = this.state
+		this.setState({
+			modalVisible: true
+		})
+	}
+
+	openPickerAsync = async () => {
+    	let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+    	if (permissionResult.granted === false) {
+      		console.log('Permission to access camera roll is required!');
+      		return;
+    	}
+    	let pickerResult = await ImagePicker.launchImageLibraryAsync();
+    	if (pickerResult.cancelled === true) {
+      		return;
+    	}
+    	this.setState({
+    		pic: pickerResult.uri
+    	})
+    	var userpic = {
+    		userdp: this.state.pic
+    	}
+    	try {
+          	await AsyncStorage.setItem('@key_profilepic', JSON.stringify(userpic));
+          		console.log("user pic saved")
+        }catch (error) {
+          	Alert.alert("Saving Information", error);
+       	}
+  	};
+
+	onsubmitmessage = () => {
+		let {message, email, name} = this.state
+		if (this.state.message != ''){
+			firebase.database().ref('HelpLineMessage/' + email).push({
+				helpMessage: message,
+				Email: email,
+				Name: name
+			}).then(() => {
+            		this.setState({
+						modalVisible: false
+					});
+          		})
+          		.catch((err) => {
+            		Alert.alert("Network Error", err);
+        		});
+    	} else {
+			Alert.alert("Misiing Fields", "Please fill in all required fields")
+		}
+	}
+
+	render(){
+		let {setModalVisible, message, name, pic, email, modalVisible} = this.state
+		return(
+
 		<SafeAreaView style={styles.container}>
 			<View style={{flex: 1, backgroundColor: '#000000', justifyContent: 'center'}}>
 				<ScrollView contentContainerStyle={styles.contentContainer} keyboardDismissMode="on-drag">
@@ -12,9 +93,9 @@ export const HomeScreen = ({navigation}) => {
 						<Modal
         					animationType="slide"
         					transparent={false}
-        					visible={modalVisible}
+        					visible={this.state.modalVisible}
         					onRequestClose={() => {
-          						Alert.alert('Modal has been closed.');
+          						Alert.alert('Spear Motors help line canceled');
         					}}>
         					<View style={{flex: 1, backgroundColor: '#000000', }}>
           						<View style={{flex: 1, backgroundColor: '#000000'}}>
@@ -28,15 +109,17 @@ export const HomeScreen = ({navigation}) => {
 	      													style={{textAlignVertical:"top", height: 140, padding: 10, borderColor: 'gray', borderWidth: 1, color: '#000', borderRadius: 4, backgroundColor: '#fff' }}
 	      													placeholder="Send us a message"
 	      													multiline={true}
+	      													keyboardType = 'default' 
+	      													onChangeText={(message)=>this.setState({message})}
 	    												/>
 	    											</View>
 	    										</View>	
 	    										<View style={{flexDirection: 'row', marginTop: 10, justifyContent: 'space-between',}}>
-						        					<TouchableOpacity onPress={() => {setModalVisible(!modalVisible)}} style={{backgroundColor: '#fff', borderRadius: 4}}>
+						        					<TouchableOpacity onPress={() => {this.setState({modalVisible: false})}} style={{backgroundColor: '#fff', borderRadius: 4}}>
 						    							<Text style={{color: '#000', textAlign: 'center', fontSize: 16, fontWeight: '800', paddingHorizontal: 40, paddingVertical: 10,}}>Cancel</Text>
 						    						</TouchableOpacity>
 
-						    						<TouchableOpacity onPress={() => {setModalVisible(!modalVisible)}} style={{backgroundColor: '#fff', borderRadius: 4}}>
+						    						<TouchableOpacity onPress={this.onsubmitmessage} style={{backgroundColor: '#fff', borderRadius: 4}}>
 						    							<Text style={{color: '#000', textAlign: 'center', fontSize: 16, fontWeight: '800', paddingHorizontal: 40, paddingVertical: 10,}}>Submit</Text>
 						    						</TouchableOpacity>
 						        				</View>
@@ -48,14 +131,23 @@ export const HomeScreen = ({navigation}) => {
       					</Modal> 
 
 						<View style={{flex: 1, justifyContent: 'flex-end',}}>
-							<View style={{marginVertical: 5, alignItems: 'center',}}>
-								<View style={{height: 120, width: 120, borderRadius: 60, overflow: 'hidden', }}>
-									<Image style={{height:'100%', width:'100%'}} source={require('../assets/images/robot-prod.png')} />
+							<View style={{flexDirection: 'row',  marginVertical: 5, justifyContent: 'center', alignItems: 'flex-end', }}>
+								<View style={{height: 130,  width: 130, borderRadius: 65, overflow: 'hidden', borderWidth: 2, borderColor: '#000' }}>
+									{pic ? (
+	                						<Image source={{ uri: pic }} style={{height:'100%', width:'100%'}}/>
+										) : (
+											<Image source={require('../assets/images/robot-prod.png')} style={{height:'100%', width:'100%'}}/>
+	                					)
+									}
 								</View>
+								<TouchableOpacity onPress={this.openPickerAsync} style={{height: 25, width: 25, justifyContent: 'center', alignItems: 'flex-start', overflow: 'hidden',}}>
+								<Ionicons name="ios-camera" size={25} color="#fff" />
+							</TouchableOpacity>
 							</View>
+							
 							<View style={{marginVertical: 8,}}>
-								<Text style={{textAlign: 'center', fontSize: 16, color: '#fff',}}>Simon Peter Muwanguzi</Text>
-								<Text style={{textAlign: 'center', fontSize: 11, color: '#fff',}}>smuwanuzi@ugandasoft.net</Text>
+								<Text style={{textAlign: 'center', fontSize: 16, color: '#fff',}}>{name}</Text>
+								<Text style={{textAlign: 'center', fontSize: 11, color: '#fff',}}>{email}</Text>
 							</View>
 
 							<View style={{backgroundColor: '#fff', width: '100%', height: 1, marginVertical: 7}}>
@@ -67,7 +159,7 @@ export const HomeScreen = ({navigation}) => {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
 									<Ionicons name="ios-car" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => navigation.push("AddCar")}>
+								<TouchableOpacity onPress={() => this.props.navigation.push("AddCar")}>
 									<Text style={{color: '#fff', fontSize: 14}}>+ Add Car</Text>
 								</TouchableOpacity>
 							</View>
@@ -76,16 +168,25 @@ export const HomeScreen = ({navigation}) => {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
 									<Ionicons name="ios-cog" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => navigation.push("RequestService")}>
+								<TouchableOpacity onPress={() => this.props.navigation.push("RequestService")}>
 									<Text style={{color: '#fff', fontSize: 15}}>+ Request for Service</Text>
 								</TouchableOpacity>
 							</View>
+
+							{/*<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
+								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
+									<Ionicons name="ios-person" size={40} color="#fff" />
+								</View>
+								<TouchableOpacity onPress={() => this.props.navigation.push("Profile")}>
+									<Text style={{color: '#fff', fontSize: 15}}>+ User Profile</Text>
+								</TouchableOpacity>
+							</View>*/}
 
 							<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
 									<Ionicons name="ios-information" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => navigation.push("Tip")}>
+								<TouchableOpacity onPress={() => this.props.navigation.push("Tip")}>
 									<Text style={{color: '#fff', fontSize: 15}}>+ Tips on Car Maintanence</Text>
 								</TouchableOpacity>
 							</View>
@@ -103,7 +204,7 @@ export const HomeScreen = ({navigation}) => {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
 									<Ionicons name="ios-help-circle" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => {setModalVisible(true)}}>
+								<TouchableOpacity onPress={this.mymodal}>
 									<Text style={{color: '#fff', fontSize: 15 }}>+ Help</Text>
 								</TouchableOpacity>
 							</View>
@@ -114,6 +215,7 @@ export const HomeScreen = ({navigation}) => {
 			</View>		
 		</SafeAreaView>
 	);
+	}
 }
 
 const styles = StyleSheet.create({
