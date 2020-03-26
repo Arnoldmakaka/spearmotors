@@ -3,8 +3,8 @@ import * as React from 'react';
 import {createStackNavigator} from "@react-navigation/stack";
 
 import HomeScreen from "../screens/HomeScreen";
-import {AddCarScreen} from "../screens/AddCarScreen";
-import {ServiceRequestScreen} from "../screens/ServiceRequestScreen";
+import AddCarScreen from "../screens/AddCarScreen";
+import ServiceRequestScreen from "../screens/ServiceRequestScreen";
 import {TipScreen} from "../screens/TipScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 

@@ -9,7 +9,7 @@ console.disableYellowBox = true;
 export default class SignupScreen extends Component{
   constructor(props) {
     super(props);
-    this.state ={
+    this.state = {
       password: '',
       loading: false,
       message: '',
@@ -23,18 +23,20 @@ export default class SignupScreen extends Component{
 
   signIn = () => {
     let {title, name, dob, address, pcontact, email, password} = this.state
-    if (this.state.email != '' && this.state.title != '' && this.state.name != ''  && (this.state.password != '' && this.state.password.length > 6 )){
-      this.setState({
-        loading:true,
-        message: ''
-      })
-      firebase.auth().createUserWithEmailAndPassword(email, password)
+    if (this.state.email != '' && this.state.title != '' && this.state.name != ''  && this.state.password != ''){
+      if(this.state.password.length > 6){
+        this.setState({
+          loading:true,
+          message: ''
+        })
+        firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((user) => {
           firebase.auth().currentUser.updateProfile({
             displayName: name
           }).then(() => {
             console.log(user)
-            firebase.database().ref('SpearMotorsUsers/' + user.uid).push({
+            let newid = title+name;
+            firebase.database().ref('SpearMotorsUsers/' + newid).push({
               Title: title,
               Fullname: name,
               Email: email,
@@ -44,36 +46,45 @@ export default class SignupScreen extends Component{
                 console.log(err)
             })
           }).then(() => {
-            Alert.alert("username", user.displayName)
-            /*this.props.navigation.navigate("Home");*/
-            this.storeuserData(user);
-          })
-          .catch((err) => {
-            this.setState({
-              loading:false,
-              message: err.message
-            })
-            Alert.alert("Network Error", "Your network connection is disfunctioning")
+              /*this.props.navigation.navigate("Home");*/
+              this.storeData();
+            }).catch((err) => {
+                this.setState({
+                  loading:false,
+                  message: err.message
+                })
+                console.log(err);
+              }) 
         })
-      })
+        .catch((err) => {
+          this.setState({
+            loading:false,
+            message: err.message
+          })
+          console.log(err);
+        })
+      }
+      else{
+        Alert.alert("Invalid Password", "Password must be more than 6 characters")
+      }
     }
     else{
-      Alert.alert("Misiing Fields", "Please fill in all required fields")
+      Alert.alert("Missing Fields", "Please fill in all the required fields!!!")
     }
   }
 
-  storeuserData = async (user) => {
+  storeData = async () => {
+    let {title, name, address, pcontact, email, password, loading, message} = this.state;
     let userData = {
-      username: user.displayName,
-      email: user.email
+      useraddress: address,
+      phonenumber: pcontact,
+      usertitle: title    
     }
     try {
       await AsyncStorage.setItem('@key_userinfo', JSON.stringify(userData));
-      console.log("user data captured")
-      alert(JSON.stringify(userData))
-      this.props.navigation.navigate("Home");
-    } catch (error) {
-      alert(error)
+        this.props.navigation.navigate("Home");
+    }catch (error) {
+        console.log("Saving Information", error);
     }
   }
 

@@ -21,6 +21,7 @@ export default class HomeScreen extends Component  {
 
 	componentDidMount() {
 		let user = firebase.auth().currentUser;
+		console.log(JSON.stringify(user))
 		this.setState({
 			name: user.displayName,
 			email: user.email
@@ -65,7 +66,9 @@ export default class HomeScreen extends Component  {
 	onsubmitmessage = () => {
 		let {message, email, name} = this.state
 		if (this.state.message != ''){
-			firebase.database().ref('HelpLineMessage/' + email).push({
+			let newid = name+"help";
+			//alert(newid)
+			firebase.database().ref('HelpLineMessage/' + newid).push({
 				helpMessage: message,
 				Email: email,
 				Name: name
@@ -78,14 +81,13 @@ export default class HomeScreen extends Component  {
             		Alert.alert("Network Error", err);
         		});
     	} else {
-			Alert.alert("Misiing Fields", "Please fill in all required fields")
+			Alert.alert("Invalid Message", "Please type something in the textbox")
 		}
 	}
 
 	render(){
 		let {setModalVisible, message, name, pic, email, modalVisible} = this.state
 		return(
-
 		<SafeAreaView style={styles.container}>
 			<View style={{flex: 1, backgroundColor: '#000000', justifyContent: 'center'}}>
 				<ScrollView contentContainerStyle={styles.contentContainer} keyboardDismissMode="on-drag">
@@ -100,18 +102,19 @@ export default class HomeScreen extends Component  {
         					<View style={{flex: 1, backgroundColor: '#000000', }}>
           						<View style={{flex: 1, backgroundColor: '#000000'}}>
 									<ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
-        								<KeyboardAvoidingView style={{flex: 1,}} behavior="padding">
+        								
         									<View style={{flex: 1, paddingHorizontal: 20, paddingVertical: 13,}}>
-        										<View style={{justifyContent: 'center',}}>
+        										<View style={{justifyContent: 'center', marginBottom: 10,}}>
         											<View style={{marginVertical: 10}}>
-	        											<Text style={{color: '#fff', fontSize: 15, paddingBottom: 10,}}>How can we help you: </Text>
+	        											<Text style={{color: '#fff', fontSize: 16, marginTop: 5, paddingBottom: 12,}}>How can we help you: </Text>
 	        											<TextInput
-	      													style={{textAlignVertical:"top", height: 140, padding: 10, borderColor: 'gray', borderWidth: 1, color: '#000', borderRadius: 4, backgroundColor: '#fff' }}
+	      													style={{textAlignVertical:"top", fontSize: 14, height: 150, padding: 12, borderColor: 'gray', borderWidth: 1, color: '#000', borderRadius: 4, backgroundColor: '#fff' }}
 	      													placeholder="Send us a message"
 	      													multiline={true}
 	      													keyboardType = 'default' 
 	      													onChangeText={(message)=>this.setState({message})}
 	    												/>
+
 	    											</View>
 	    										</View>	
 	    										<View style={{flexDirection: 'row', marginTop: 10, justifyContent: 'space-between',}}>
@@ -124,88 +127,79 @@ export default class HomeScreen extends Component  {
 						    						</TouchableOpacity>
 						        				</View>
         									</View>
-        								</KeyboardAvoidingView>
+        								
         							</ScrollView>	
 								</View>
         					</View>
       					</Modal> 
 
-						<View style={{flex: 1, justifyContent: 'flex-end',}}>
+						<View style={{flex: 1, justifyContent: 'flex-end', overflow: 'hidden', }}>
 							<View style={{flexDirection: 'row',  marginVertical: 5, justifyContent: 'center', alignItems: 'flex-end', }}>
 								<View style={{height: 130,  width: 130, borderRadius: 65, overflow: 'hidden', borderWidth: 2, borderColor: '#000' }}>
 									{pic ? (
 	                						<Image source={{ uri: pic }} style={{height:'100%', width:'100%'}}/>
 										) : (
-											<Image source={require('../assets/images/robot-prod.png')} style={{height:'100%', width:'100%'}}/>
+											<Image source={require('../assets/images/no-img.png')} style={{height:'100%', width:'100%'}}/>
 	                					)
 									}
 								</View>
 								<TouchableOpacity onPress={this.openPickerAsync} style={{height: 25, width: 25, justifyContent: 'center', alignItems: 'flex-start', overflow: 'hidden',}}>
-								<Ionicons name="ios-camera" size={25} color="#fff" />
+								<Ionicons name="ios-camera" size={26} color="#fff" />
 							</TouchableOpacity>
 							</View>
 							
 							<View style={{marginVertical: 8,}}>
 								<Text style={{textAlign: 'center', fontSize: 16, color: '#fff',}}>{name}</Text>
-								<Text style={{textAlign: 'center', fontSize: 11, color: '#fff',}}>{email}</Text>
+								<Text style={{textAlign: 'center', fontSize: 13, color: '#fff',}}>{email}</Text>
 							</View>
 
-							<View style={{backgroundColor: '#fff', width: '100%', height: 1, marginVertical: 7}}>
+							<View style={{backgroundColor: '#fff', width: '100%', height: 2, marginBottom: 10}}>
 							</View>	
 						</View>
 
 						<View style={{flex: 1, justifyContent: 'flex-start',}}>
 							<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
-								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
+								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-car" size={40} color="#fff" />
 								</View>
 								<TouchableOpacity onPress={() => this.props.navigation.push("AddCar")}>
-									<Text style={{color: '#fff', fontSize: 14}}>+ Add Car</Text>
+									<Text style={{color: '#fff', fontSize: 16}}>+ Add Car</Text>
 								</TouchableOpacity>
 							</View>
 
 							<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
-								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
+								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-cog" size={40} color="#fff" />
 								</View>
 								<TouchableOpacity onPress={() => this.props.navigation.push("RequestService")}>
-									<Text style={{color: '#fff', fontSize: 15}}>+ Request for Service</Text>
+									<Text style={{color: '#fff', fontSize: 16}}>+ Request for Service</Text>
 								</TouchableOpacity>
 							</View>
 
-							{/*<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
-								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
+							<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
+								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-person" size={40} color="#fff" />
 								</View>
 								<TouchableOpacity onPress={() => this.props.navigation.push("Profile")}>
-									<Text style={{color: '#fff', fontSize: 15}}>+ User Profile</Text>
-								</TouchableOpacity>
-							</View>*/}
-
-							<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
-								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
-									<Ionicons name="ios-information" size={40} color="#fff" />
-								</View>
-								<TouchableOpacity onPress={() => this.props.navigation.push("Tip")}>
-									<Text style={{color: '#fff', fontSize: 15}}>+ Tips on Car Maintanence</Text>
+									<Text style={{color: '#fff', fontSize: 16}}>+ User Profile</Text>
 								</TouchableOpacity>
 							</View>
 
-							{/*<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
-								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
-									<Ionicons name="ios-person" size={40} color="#fff" />
+							<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
+								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
+									<Ionicons name="ios-information" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => alert}>
-									<Text style={{color: '#fff', fontSize: 15}}>+ User Profile</Text>
+								<TouchableOpacity onPress={() => this.props.navigation.push("Tip")}>
+									<Text style={{color: '#fff', fontSize: 16}}>+ Tips on Car Maintanence</Text>
 								</TouchableOpacity>
-							</View>*/}
+							</View>
 
 							<View style={{flexDirection: 'row', marginVertical: 5, alignItems: 'center',}}>
-								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 30, }}>
+								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-help-circle" size={40} color="#fff" />
 								</View>
 								<TouchableOpacity onPress={this.mymodal}>
-									<Text style={{color: '#fff', fontSize: 15 }}>+ Help</Text>
+									<Text style={{color: '#fff', fontSize: 16 }}>+ Help</Text>
 								</TouchableOpacity>
 							</View>
 						</View>

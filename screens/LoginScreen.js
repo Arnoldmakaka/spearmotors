@@ -17,28 +17,32 @@ export default class LoginScreen extends Component{
     }
   }
 
-  login = () => {
-    let {email, password} = this.state
-    if (this.state.email != '' && (this.state.password != '' && this.state.password.length > 6 )){
-      this.setState({
-        loading:true,
-        message: ''
-      })
-      firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((user) => {
-        this.props.navigation.navigate("Home");
-      })
-      .catch((err) => {
-        this.setState({
-          loading:false,
-          message: err.message
-        })
-      })
-    }
-    else{
-      Alert.alert("Misiing Fields", "Please fill in all required fields")
-    }
-  }
+	login = () => {
+    	let {email, password} = this.state
+    	if (this.state.email != '' && this.state.password != ''){
+	    	if(this.state.password.length > 6){  
+	    		this.setState({
+	        		loading:true,
+	        		message: ''
+	      		})
+	      		firebase.auth().signInWithEmailAndPassword(email, password)
+	      		.then((user) => {
+	        		this.props.navigation.navigate("Home");
+	      		})
+	      		.catch((err) => {
+	        		this.setState({
+	          			loading:false,
+	          			message: err.message
+	        		})
+	      		})
+	  		} else{
+	  			Alert.alert("Invalid Password", "Password must be more than 6 characters")
+	  		}
+    	}
+    	else{
+      		Alert.alert("Missing Fields", "Please fill in all the required fields!!!")
+    	}
+  	}
 
   render() {
     let{message, loading} = this.state
