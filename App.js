@@ -15,13 +15,14 @@ import {AuthContext} from './context';
 import * as firebase from "firebase";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB5rh-a82gm5HtCjJK3uXZ8YqWSBsRnfaE",
-  authDomain: "myhack-cc52b.firebaseapp.com",
-  databaseURL: "https://myhack-cc52b.firebaseio.com",
-  projectId: "myhack-cc52b",
-  storageBucket: "myhack-cc52b.appspot.com",
-  messagingSenderId: "642183315013",
-  appId: "1:642183315013:web:40160351295154637b6d2c"
+  apiKey: "AIzaSyCExkWiB4zpK5J12rz2Lg6oybzDBjpVEYI",
+  authDomain: "spearmotors-5153e.firebaseapp.com",
+  databaseURL: "https://spearmotors-5153e.firebaseio.com",
+  projectId: "spearmotors-5153e",
+  storageBucket: "spearmotors-5153e.appspot.com",
+  messagingSenderId: "141358908023",
+  appId: "1:141358908023:web:3f1dc89a63c6d20f3e7c72",
+  measurementId: "G-65N45Y62TQ"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

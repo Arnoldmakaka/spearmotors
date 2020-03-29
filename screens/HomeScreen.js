@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Modal, Alert, AsyncStorage, ImageBackground, KeyboardAvoidingView, TextInput, StyleSheet, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar, Button} from 'react-native';
+import { View, Modal, Alert, AsyncStorage, Linking, ImageBackground, KeyboardAvoidingView, TextInput, StyleSheet, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar, Button} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebase from "firebase";
@@ -19,7 +19,7 @@ export default class HomeScreen extends Component  {
 		}
 	}
 
-	componentDidMount() {
+	componentDidMount = async () => {
 		let user = firebase.auth().currentUser;
 		console.log(JSON.stringify(user))
 		this.setState({
@@ -102,7 +102,7 @@ export default class HomeScreen extends Component  {
         					<View style={{flex: 1, backgroundColor: '#000000', }}>
           						<View style={{flex: 1, backgroundColor: '#000000'}}>
 									<ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
-        								
+        								<KeyboardAvoidingView style={{flex: 1,}} behavior="padding" enabled>
         									<View style={{flex: 1, paddingHorizontal: 20, paddingVertical: 13,}}>
         										<View style={{justifyContent: 'center', marginBottom: 10,}}>
         											<View style={{marginVertical: 10}}>
@@ -126,8 +126,15 @@ export default class HomeScreen extends Component  {
 						    							<Text style={{color: '#000', textAlign: 'center', fontSize: 16, fontWeight: '800', paddingHorizontal: 40, paddingVertical: 10,}}>Submit</Text>
 						    						</TouchableOpacity>
 						        				</View>
+
+						        				<View style={{flexDirection: 'row', marginVertical: 40, alignItems: 'center',}}>
+						        					<TouchableOpacity onPress={() => Linking.openURL('whatsapp://send?text=' + "Hello there" + '&phone=256' + "754140200")} style={{height: 60, width: 60, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 15, }}>
+														<Ionicons name="logo-whatsapp" size={60} color="green" />
+													</TouchableOpacity>
+						        				</View>
+
         									</View>
-        								
+        								</KeyboardAvoidingView>
         							</ScrollView>	
 								</View>
         					</View>
@@ -162,8 +169,8 @@ export default class HomeScreen extends Component  {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-car" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => this.props.navigation.push("AddCar")}>
-									<Text style={{color: '#fff', fontSize: 16}}>+ Add Car</Text>
+								<TouchableOpacity style={{width: '73%', borderBottomWidth: 1, borderBottomColor: '#fff',}} onPress={() => this.props.navigation.push("AddCar")}>
+									<Text style={{color: '#fff', fontSize: 15, paddingBottom: 2,}}>+ Add Car</Text>
 								</TouchableOpacity>
 							</View>
 
@@ -171,8 +178,8 @@ export default class HomeScreen extends Component  {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-cog" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => this.props.navigation.push("RequestService")}>
-									<Text style={{color: '#fff', fontSize: 16}}>+ Request for Service</Text>
+								<TouchableOpacity style={{width: '73%', borderBottomWidth: 1, borderBottomColor: '#fff',}} onPress={() => this.props.navigation.push("RequestService")}>
+									<Text style={{color: '#fff', fontSize: 15, paddingBottom: 2,}}>+ Request for Service</Text>
 								</TouchableOpacity>
 							</View>
 
@@ -180,8 +187,8 @@ export default class HomeScreen extends Component  {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-person" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => this.props.navigation.push("Profile")}>
-									<Text style={{color: '#fff', fontSize: 16}}>+ User Profile</Text>
+								<TouchableOpacity style={{width: '73%', borderBottomWidth: 1, borderBottomColor: '#fff',}} onPress={() => this.props.navigation.push("Profile")}>
+									<Text style={{color: '#fff', fontSize: 15, paddingBottom: 2,}}>+ User Profile</Text>
 								</TouchableOpacity>
 							</View>
 
@@ -189,8 +196,8 @@ export default class HomeScreen extends Component  {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-information" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={() => this.props.navigation.push("Tip")}>
-									<Text style={{color: '#fff', fontSize: 16}}>+ Tips on Car Maintanence</Text>
+								<TouchableOpacity style={{width: '73%', borderBottomWidth: 1, borderBottomColor: '#fff',}} onPress={() => this.props.navigation.push("Tip")}>
+									<Text style={{color: '#fff', fontSize: 15, paddingBottom: 2,}}>+ Tips on Car Maintanence</Text>
 								</TouchableOpacity>
 							</View>
 
@@ -198,8 +205,8 @@ export default class HomeScreen extends Component  {
 								<View style={{height: 40, width: 40, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', marginRight: 25, }}>
 									<Ionicons name="ios-help-circle" size={40} color="#fff" />
 								</View>
-								<TouchableOpacity onPress={this.mymodal}>
-									<Text style={{color: '#fff', fontSize: 16 }}>+ Help</Text>
+								<TouchableOpacity style={{width: '73%', borderBottomWidth: 1, borderBottomColor: '#fff',}} onPress={this.mymodal}>
+									<Text style={{color: '#fff', fontSize: 15, paddingBottom: 2, }}>+ Help</Text>
 								</TouchableOpacity>
 							</View>
 						</View>

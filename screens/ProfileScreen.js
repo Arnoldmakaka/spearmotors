@@ -14,7 +14,7 @@ export default class ProfileScreen extends Component{
       		name: '',
       		address: '',
       		pcontact: '',
-      		email: '',
+      		myemail: '',
     	}
   	}
 
@@ -22,7 +22,7 @@ export default class ProfileScreen extends Component{
   		let user = firebase.auth().currentUser;
   		this.setState({
 			name: user.displayName,
-			email: user.email
+			myemail: user.email
 		})
 		//alert(this.state.name)
   		AsyncStorage.getItem("@key_userinfo").then((r)=>{
@@ -30,14 +30,14 @@ export default class ProfileScreen extends Component{
   			//alert(JSON.stringify(user))
 		    this.setState({
 		    	address: retrieveduserinfo.useraddress,
-      			pcontact: retrieveduserinfo.phonenumber,
-      			title: retrieveduserinfo.usertitle
+      		pcontact: retrieveduserinfo.phonenumber,
+      		title: retrieveduserinfo.usertitle
 		    })
     	}) 
   	}
 
   	onSave = async () => {
-  		let {title, name, address, pcontact, email, loading, message} = this.state;
+  		let {title, name, address, pcontact, myemail, loading, message} = this.state;
   		let user = firebase.auth().currentUser
   		if(name != "" && title != "" && address != "" && pcontact != "" ){
 	  		this.setState({
@@ -50,12 +50,11 @@ export default class ProfileScreen extends Component{
       			usertitle: title    
     		}
     		user.updateProfile({
-    			displayName: name,
-    			email: email
+    			displayName: name
     		})
     		try {
       			await AsyncStorage.setItem('@key_userinfo', JSON.stringify(userData));
-        			this.props.navigation.navigate("Home");
+        			this.props.navigation.navigate("Home", {option: "update"});
     		}catch (err) {
         		console.log("Saving Information", error);
         		this.setState({
@@ -69,7 +68,7 @@ export default class ProfileScreen extends Component{
   	}
 
 	render(){
-		let {title, name, address, pcontact, email, loading, message} = this.state;
+		let {title, name, address, pcontact, myemail, loading, message} = this.state;
 		return(
 			<View style={{flex: 1, backgroundColor: '#000000'}}>
 				<ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
@@ -97,13 +96,14 @@ export default class ProfileScreen extends Component{
       						</View>
 
       						<View style={{marginVertical: 3}}>
-        						<Text style={{color: '#fff', fontSize: 12, paddingBottom: 5,}}>User Email: </Text>
+        						<Text style={{color: '#fff', fontSize: 12, paddingBottom: 5,}}>User Email: (not editable)</Text>
           						<TextInput
         							style={{ height: 40, padding: 10, borderColor: 'gray', borderWidth: 1, color: '#000', borderRadius: 4, backgroundColor: '#fff' }}
         							placeholder="User email"
         							keyboardType = 'email-address'
-        							onChangeText={(email)=>this.setState({email})} returnKeyType='next'
-      							>{email}</TextInput>
+                      editable={false}
+        							returnKeyType='next'
+      							>{myemail}</TextInput>
       						</View>
 
       						<View style={{marginVertical: 3}}>

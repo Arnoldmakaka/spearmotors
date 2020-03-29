@@ -43,20 +43,20 @@ export default class ForgotPassword extends Component{
     let{message, loading} = this.state
     return (
       <View style={{flex: 1, backgroundColor: '#000', paddingVertical: 30}}>
-
-        <View style={{backgroundColor: '#000'}}>
-          <View style={{height: 40,}}>
-            <View style={{alignItems: 'flex-start', justifyContent: 'center',}}>
-              <TouchableOpacity style={{marginHorizontal: 15,}} onPress={() => this.props.navigation.navigate("Login")}>
-                <Ionicons name="ios-arrow-round-back" size={40} color="#fff" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-
         <View style={{flex: 1, backgroundColor: '#000000'}}>
           <ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
             <KeyboardAvoidingView style={{flex: 1,}} behavior="padding" enabled>
+
+              <View style={{backgroundColor: '#000', paddingTop: 20,}}>
+                <View style={{height: 30,}}>
+                  <View style={{alignItems: 'flex-start', justifyContent: 'center',}}>
+                    <TouchableOpacity style={{marginHorizontal: 15,}} onPress={() => this.props.navigation.navigate("Login")}>
+                      <Ionicons name="ios-arrow-round-back" size={40} color="#fff" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
               <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 40, paddingVertical: 40, }}>
                 {loading ? <ActivityIndicator color="#fff" /> : <Text style={{color: '#fff', textAlign: 'center', paddingVertical: 15 }}>{message}</Text>}
                 <View style={{flex: 1,  justifyContent: 'center',}}>

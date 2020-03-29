@@ -91,13 +91,13 @@ export default class SignupScreen extends Component{
   render() {
     let {title, name, address, pcontact, email, password, loading, message} = this.state;
     return (
-      <View style={{flex: 1, backgroundColor: '#000', paddingVertical: 30}}>
+      <View style={{flex: 1, backgroundColor: '#000', paddingTop: 30}}>
         <View style={{flex: 1, backgroundColor: '#000000'}}>
           <ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
-            <KeyboardAvoidingView style={{flex: 1,}} behavior="padding" enabled> 
+            <KeyboardAvoidingView style={{flex: 1,}} behavior="padding" enabled>
 
-              <View style={{backgroundColor: '#000'}}>
-                <View style={{height: 40,}}>
+              <View style={{backgroundColor: '#000', paddingTop: 20,}}>
+                <View style={{height: 30,}}>
                   <View style={{alignItems: 'flex-start', justifyContent: 'center',}}>
                     <TouchableOpacity style={{marginHorizontal: 15,}} onPress={() => this.props.navigation.navigate("Login")}>
                       <Ionicons name="ios-arrow-round-back" size={40} color="#fff" />

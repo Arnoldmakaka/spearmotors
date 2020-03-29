@@ -49,7 +49,7 @@ export default class LoginScreen extends Component{
     return (
       <View style={{flex: 1, backgroundColor: '#000'}}>
         <View style={{flex: 1, backgroundColor: '#000000'}}>
-          <ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
+          <ScrollView style={{flex: 1,}} >
             <KeyboardAvoidingView style={{flex: 1,}} behavior="padding" enabled>
               <View style={{flex: 1, justifyContent: 'center', paddingHorizontal: 40, paddingVertical: 40, }}>
                 {loading ? <ActivityIndicator color="#fff" /> : <Text style={{color: '#fff', textAlign: 'center', paddingVertical: 15 }}>{message}</Text>}

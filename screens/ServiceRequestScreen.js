@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { View, Picker, Modal, ActivityIndicator, Alert, AsyncStorage, ImageBackground, KeyboardAvoidingView, TextInput, StyleSheet, Text, Image, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar, Button} from 'react-native';
 import * as firebase from "firebase";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class ServiceRequestScreen extends Component  {
 
@@ -63,7 +64,7 @@ export default class ServiceRequestScreen extends Component  {
 		return(
 			<View style={{flex: 1, backgroundColor: '#000000'}}>
 				<ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
-	        		<KeyboardAvoidingView style={{flex: 1,}} behavior="padding">
+	        		<KeyboardAwareScrollView style={{flex: 1,}}>
 	        			<View style={{flex: 1, paddingHorizontal: 20, paddingVertical: 10,}}>
 	        				
 	        				<View style={{flex: 1, }}>
@@ -103,7 +104,7 @@ export default class ServiceRequestScreen extends Component  {
                 			</View>
 
 	        			</View>
-	        		</KeyboardAvoidingView>
+	        		</KeyboardAwareScrollView>
 	        	</ScrollView>	
 			</View>
 		);

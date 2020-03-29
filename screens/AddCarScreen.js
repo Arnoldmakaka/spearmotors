@@ -3,6 +3,7 @@ import { View, Alert, StyleSheet, Image, Text, Platform, TouchableOpacity, Scrol
 import * as ImagePicker from 'expo-image-picker';
 import DatePicker from 'react-native-datepicker';
 import * as firebase from "firebase";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 var moment = require('moment');
 
@@ -105,7 +106,7 @@ export default class AddCarScreen extends Component  {
   	return(
   		<View style={{flex: 1, backgroundColor: '#000000'}}>
         <ScrollView style={{flex: 1,}} contentContainerStyle={styles.contentContainer}>
-              <KeyboardAvoidingView style={{flex: 1,}} behavior="padding">
+              <KeyboardAwareScrollView style={{flex: 1,}}>
                 <View style={{flex: 1, paddingHorizontal: 20, paddingVertical: 5,}}>
                   <View style={{flex: 1, justifyContent: 'center', marginVertical: 0,}}>
                     {loading ? <ActivityIndicator color="#fff" /> : <Text style={{color: '#fff', textAlign: 'center', paddingVertical: 5 }}>{message}</Text>}
@@ -230,7 +231,7 @@ export default class AddCarScreen extends Component  {
 
 
           			</View>
-          		</KeyboardAvoidingView>
+          		</KeyboardAwareScrollView>
           	</ScrollView>	
   		</View>
   	);
